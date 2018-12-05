@@ -45,9 +45,8 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    @FastScroller.ScrollbarState
-    public int calculateScrollState(RecyclerView attachedRecyclerView) {
-        return shouldShowScrollbar(attachedRecyclerView) ? HIDDEN_BUBBLE : NO_SCROLLBAR;
+    public FastScroller.ScrollbarState calculateScrollState(RecyclerView attachedRecyclerView) {
+        return shouldShowScrollbar(attachedRecyclerView) ? FastScroller.ScrollbarState.HIDDEN_BUBBLE: FastScroller.ScrollbarState.NO_SCROLLBAR;
     }
 
     @Override

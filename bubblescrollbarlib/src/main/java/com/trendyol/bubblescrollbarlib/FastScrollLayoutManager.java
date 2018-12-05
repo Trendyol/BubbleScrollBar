@@ -10,8 +10,7 @@ public interface FastScrollLayoutManager {
 
     void calculateBubblePosition(FastScrollViewComponents viewComponents, Point outBubblePosition);
 
-    @FastScroller.ScrollbarState
-    int calculateScrollState(@Nullable RecyclerView attachedRecyclerView);
+    FastScroller.ScrollbarState calculateScrollState(@Nullable RecyclerView attachedRecyclerView);
 
     boolean shouldShowScrollbar(@Nullable RecyclerView attachedRecyclerView);
 
