@@ -37,7 +37,8 @@
         android:textColor="#ffffff"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:padding="4dp"
         tools:background="@android:color/holo_purple"
-        tools:text="1" />
+        tools:text="1323233232" />
 </RelativeLayout>
 
