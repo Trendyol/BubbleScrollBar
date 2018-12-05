@@ -21,13 +21,16 @@ public class VerticalFastScrollBubbleAnimationManager implements FastScrollBubbl
     }
 
     @Override
-    public ValueAnimator.AnimatorUpdateListener provideShowBubbleUpdateListener(FastScrollViewComponents viewComponents) {
+    public ValueAnimator.AnimatorUpdateListener provideShowBubbleUpdateListener(final FastScrollViewComponents viewComponents) {
         if (updateListener == null) {
-            updateListener = animation -> {
-                float animatedValue = (float) animation.getAnimatedValue();
-                viewComponents.getBubble().setAlpha(animatedValue);
-                viewComponents.getBubble().setScaleX(animatedValue);
-                viewComponents.getBubble().setScaleY(animatedValue);
+            updateListener = new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float animatedValue = (float) animation.getAnimatedValue();
+                    viewComponents.getBubble().setAlpha(animatedValue);
+                    viewComponents.getBubble().setScaleX(animatedValue);
+                    viewComponents.getBubble().setScaleY(animatedValue);
+                }
             };
         }
         return updateListener;

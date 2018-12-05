@@ -94,8 +94,18 @@ public class FastScroller extends FrameLayout {
                 LayoutInflater.from(getContext()), R.layout.view_fast_scroller, this, true);
         fastScrollViewComponents = new FastScrollViewComponents(binding);
         initializeAnimations();
-        post(() -> setScrollState(layoutManager.calculateScrollState(fastScrollViewComponents.getRecyclerView())));
-        post(this::setInitialBubblePosition);
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setScrollState(layoutManager.calculateScrollState(fastScrollViewComponents.getRecyclerView()));
+            }
+        });
+        post(new Runnable() {
+            @Override
+            public void run() {
+                FastScroller.this.setInitialBubblePosition();
+            }
+        });
     }
 
     private void setInitialBubblePosition() {
@@ -179,14 +189,19 @@ public class FastScroller extends FrameLayout {
         binding.bubble.setText(bubbleText);
     }
 
-    public void attachToRecyclerView(RecyclerView recyclerView) {
+    public void attachToRecyclerView(final RecyclerView recyclerView) {
         RecyclerView attachedRecyclerView = fastScrollViewComponents.getRecyclerView();
         if (attachedRecyclerView != null) {
             destroyCallbacks();
         }
         fastScrollViewComponents.setRecyclerView(recyclerView);
         setupCallbacks();
-        post(() -> setScrollState(layoutManager.calculateScrollState(recyclerView)));
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setScrollState(layoutManager.calculateScrollState(recyclerView));
+            }
+        });
     }
 
     @Override
