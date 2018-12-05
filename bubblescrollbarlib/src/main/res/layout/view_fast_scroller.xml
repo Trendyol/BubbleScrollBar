@@ -1,57 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
 
-    <data>
+    <FrameLayout
+        android:id="@+id/track"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        tools:background="@android:color/holo_blue_bright">
 
-        <variable
-                name="viewState"
-                type="com.trendyol.bubblescrollbarlib.FastScrollerViewState"/>
-    </data>
-
-    <RelativeLayout
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/thumb"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent">
+            android:layout_height="wrap_content"
+            tools:background="@android:color/holo_purple"
+            tools:layout_height="20dp"
+            tools:layout_width="5dp" />
 
-        <FrameLayout
-                android:id="@+id/track"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:background="@{viewState.trackColor}"
-                tools:background="@color/com_facebook_blue">
+    </FrameLayout>
 
-            <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/thumb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:imageDrawable="@{viewState.thumbDrawable}"
-                    tools:background="@color/colorPrimary"
-                    tools:layout_height="20dp"
-                    tools:layout_width="5dp"/>
-
-        </FrameLayout>
-
-        <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/bubble"
-                android:layout_width="wrap_content"
-                android:layout_height="54dp"
-                android:layout_marginEnd="5dp"
-                android:layout_toStartOf="@+id/track"
-                android:background="@{viewState.bubbleDrawable}"
-                android:elevation="6dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:letterSpacing="0.02"
-                android:minWidth="54dp"
-                android:singleLine="true"
-                android:textColor="#ffffff"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                tools:background="@drawable/fast_scroll_thumb"
-                tools:text="1"/>
-    </RelativeLayout>
-</layout>
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="54dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@+id/track"
+        android:elevation="6dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:letterSpacing="0.02"
+        android:minWidth="54dp"
+        android:singleLine="true"
+        android:textColor="#ffffff"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        tools:background="@android:color/holo_purple"
+        tools:text="1" />
+</RelativeLayout>
 

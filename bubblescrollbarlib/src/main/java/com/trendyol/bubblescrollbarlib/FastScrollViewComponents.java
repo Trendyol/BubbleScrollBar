@@ -3,15 +3,20 @@ package com.trendyol.bubblescrollbarlib;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import com.trendyol.bubblescrollbarlib.databinding.ViewFastScrollerBinding;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class FastScrollViewComponents {
 
-    private final ViewFastScrollerBinding binding;
+    private final ImageView thumb;
+    private final View track;
+    private final TextView bubble;
     private RecyclerView recyclerView;
 
-    public FastScrollViewComponents(ViewFastScrollerBinding binding) {
-        this.binding = binding;
+    public FastScrollViewComponents(ImageView thumb, View track, TextView bubble) {
+        this.thumb = thumb;
+        this.track = track;
+        this.bubble = bubble;
     }
 
     @Nullable
@@ -23,15 +28,15 @@ public class FastScrollViewComponents {
         this.recyclerView = recyclerView;
     }
 
-    public final View getThumb() {
-        return binding.thumb;
+    public final ImageView getThumb() {
+        return thumb;
     }
 
     public final View getTrack() {
-        return binding.track;
+        return track;
     }
 
-    public final View getBubble() {
-        return binding.bubble;
+    public final TextView getBubble() {
+        return bubble;
     }
 }

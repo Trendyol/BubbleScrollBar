@@ -4,20 +4,21 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.databinding.DataBindingUtil;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import com.trendyol.bubblescrollbarlib.databinding.ViewFastScrollerBinding;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollBubbleAnimationManager;
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollLayoutManager;
 
@@ -34,9 +35,9 @@ public class FastScroller extends FrameLayout {
     private final Rect thumbRect = new Rect();
     private final Rect trackRect = new Rect();
 
-    private ViewFastScrollerBinding binding;
     @ScrollbarState
     private int currentScrollbarState = ScrollbarState.HIDDEN_BUBBLE;
+    private FastScrollerViewState viewState;
 
     // Default BubbleAnimationManager
     private FastScrollBubbleAnimationManager bubbleAnimationManager = new VerticalFastScrollBubbleAnimationManager();
@@ -90,9 +91,8 @@ public class FastScroller extends FrameLayout {
     }
 
     private void initializeView() {
-        binding = DataBindingUtil.inflate(
-                LayoutInflater.from(getContext()), R.layout.view_fast_scroller, this, true);
-        fastScrollViewComponents = new FastScrollViewComponents(binding);
+        View root = LayoutInflater.from(getContext()).inflate(R.layout.view_fast_scroller, this, true);
+        fastScrollViewComponents = new FastScrollViewComponents((ImageView) root.findViewById(R.id.thumb), root.findViewById(R.id.track), (TextView) root.findViewById(R.id.bubble));
         initializeAnimations();
         post(new Runnable() {
             @Override
@@ -157,36 +157,41 @@ public class FastScroller extends FrameLayout {
         setVisibility(GONE);
     }
 
-    public void setViewState(FastScrollerViewState state) {
-        binding.setViewState(state);
-        binding.executePendingBindings();
+    public void setViewState(FastScrollerViewState viewState) {
+        this.viewState = viewState;
+        fastScrollViewComponents.getTrack().setBackgroundColor(viewState.getTrackColor());
+        fastScrollViewComponents.getThumb().setImageDrawable(viewState.getThumbDrawable());
+        fastScrollViewComponents.getBubble().setBackground(viewState.getBubbleDrawable());
     }
 
     private void moveBubble() {
-        binding.bubble.setX(bubblePosition.x);
-        binding.bubble.setY(bubblePosition.y);
+        View bubble = fastScrollViewComponents.getBubble();
+        bubble.setX(bubblePosition.x);
+        bubble.setY(bubblePosition.y);
 
     }
 
     private void moveThumb() {
-        binding.thumb.setX(thumbPosition.x);
-        binding.thumb.setY(thumbPosition.y);
+        View thumb = fastScrollViewComponents.getThumb();
+        thumb.setX(thumbPosition.x);
+        thumb.setY(thumbPosition.y);
     }
 
     private String getBubbleText() {
         int targetPosition = layoutManager.getScrolledItemPosition(fastScrollViewComponents);
         return targetPosition != RecyclerView.NO_POSITION ?
-                binding.getViewState().getBubbleTextProvider().provideBubbleText(targetPosition) :
+                viewState.getBubbleTextProvider().provideBubbleText(targetPosition) :
                 "";
     }
 
     public void setBubbleText(String bubbleText) {
+        TextView bubble = fastScrollViewComponents.getBubble();
         if (bubbleText == null || bubbleText.isEmpty()) {
-            binding.bubble.setVisibility(GONE);
+            bubble.setVisibility(GONE);
         } else {
-            binding.bubble.setVisibility(VISIBLE);
+            bubble.setVisibility(VISIBLE);
         }
-        binding.bubble.setText(bubbleText);
+        bubble.setText(bubbleText);
     }
 
     public void attachToRecyclerView(final RecyclerView recyclerView) {
@@ -234,11 +239,11 @@ public class FastScroller extends FrameLayout {
     }
 
     private boolean isEventInTrackPosition(MotionEvent event) {
-        return Utils.isEventInViewRect(event, binding.track, TOUCHABLE_AREA_PADDING, trackRect);
+        return Utils.isEventInViewRect(event, fastScrollViewComponents.getTrack(), TOUCHABLE_AREA_PADDING, trackRect);
     }
 
     private boolean isEventInThumbPosition(MotionEvent event) {
-        return Utils.isEventInViewRect(event, binding.thumb, TOUCHABLE_AREA_PADDING, thumbRect);
+        return Utils.isEventInViewRect(event, fastScrollViewComponents.getThumb(), TOUCHABLE_AREA_PADDING, thumbRect);
     }
 
     private void playHideBubbleAnimation() {
@@ -274,7 +279,7 @@ public class FastScroller extends FrameLayout {
         return layoutManager.getScrollTarget(event, fastScrollViewComponents);
     }
 
-    public void setBubbleAnimationManager(FastScrollBubbleAnimationManager fastScrollBubbleAnimationManager) {
+    public void setBubbleAnimationManager(FastScrollBubbleAnimationManager bubbleAnimationManager) {
         this.bubbleAnimationManager = bubbleAnimationManager;
     }
 
@@ -296,14 +301,14 @@ public class FastScroller extends FrameLayout {
 
 
     public static class Utils {
-        public static void addPadding(int paddingDp, Rect outRect) {
+        static void addPadding(int paddingDp, Rect outRect) {
             outRect.left -= paddingDp;
             outRect.top -= paddingDp;
             outRect.right += paddingDp;
             outRect.bottom += paddingDp;
         }
 
-        public static boolean isEventInViewRect(MotionEvent event, View view, int padding, Rect outRect) {
+        static boolean isEventInViewRect(MotionEvent event, View view, int padding, Rect outRect) {
             int touchX = (int) event.getRawX();
             int touchY = (int) event.getRawY();
             view.getGlobalVisibleRect(outRect);
@@ -311,7 +316,7 @@ public class FastScroller extends FrameLayout {
             return outRect.contains(touchX, touchY);
         }
 
-        public static int dpToPx(int dp) {
+        static int dpToPx(int dp) {
             return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
         }
     }
