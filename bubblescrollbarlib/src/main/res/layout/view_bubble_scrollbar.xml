@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <FrameLayout
+        android:id="@+id/scrollBar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        tools:background="@android:color/holo_blue_bright">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/thumb"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            tools:background="@android:color/holo_purple"
+            tools:layout_height="20dp"
+            tools:layout_width="match_parent" />
+
+    </FrameLayout>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="54dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@+id/scrollBar"
+        android:elevation="6dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:letterSpacing="0.02"
+        android:minWidth="54dp"
+        android:singleLine="true"
+        android:textColor="#ffffff"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:padding="4dp"
+        tools:background="@android:color/holo_purple"
+        tools:text="1323233232" />
+</RelativeLayout>
+

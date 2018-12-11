@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bubble_margin">4dp</dimen>
+    <dimen name="thumb_width">10dp</dimen>
+    <dimen name="thumb_height">46.5dp</dimen>
+
+</resources>
