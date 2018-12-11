@@ -6,12 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
+import com.trendyol.bubblescrollbarlib.BubbleScrollbarState;
 import com.trendyol.bubblescrollbarlib.FastScrollLayoutManager;
 import com.trendyol.bubblescrollbarlib.FastScrollViewComponents;
-import com.trendyol.bubblescrollbarlib.FastScroller;
-
-import static com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.HIDDEN_BUBBLE;
-import static com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.NO_SCROLLBAR;
 
 public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager {
 
@@ -45,8 +42,8 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    public FastScroller.ScrollbarState calculateScrollState(RecyclerView attachedRecyclerView) {
-        return shouldShowScrollbar(attachedRecyclerView) ? FastScroller.ScrollbarState.HIDDEN_BUBBLE: FastScroller.ScrollbarState.NO_SCROLLBAR;
+    public BubbleScrollbarState calculateScrollState(RecyclerView attachedRecyclerView) {
+        return shouldShowScrollbar(attachedRecyclerView) ? BubbleScrollbarState.HIDDEN_BUBBLE: BubbleScrollbarState.NO_SCROLLBAR;
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Resources
-import android.content.res.TypedArray
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -20,9 +19,13 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.*
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollBubbleAnimationManager
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollLayoutManager
+import com.trendyol.common.getDimensionOrDefaultInPixelSize
+import com.trendyol.bubblescrollbarlib.BubbleScrollbarState.*
+import com.trendyol.common.addPadding
+import com.trendyol.common.dpToPx
+import com.trendyol.common.isInViewRect
 
 class FastScroller : FrameLayout {
     private val thumbPosition = Point()
@@ -30,8 +33,7 @@ class FastScroller : FrameLayout {
     private val thumbRect = Rect()
     private val trackRect = Rect()
 
-    private var currentScrollbarState = ScrollbarState.HIDDEN_BUBBLE
-    private var viewState: FastScrollerViewState? = null
+    private var currentScrollbarState = BubbleScrollbarState.HIDDEN_BUBBLE
 
     // Default BubbleAnimationManager
     private var bubbleAnimationManager: FastScrollBubbleAnimationManager = VerticalFastScrollBubbleAnimationManager()
@@ -41,6 +43,8 @@ class FastScroller : FrameLayout {
     // Default LayoutManager
     private var layoutManager: FastScrollLayoutManager = VerticalFastScrollLayoutManager()
     private lateinit var fastScrollViewComponents: FastScrollViewComponents
+
+    var bubbleTextProvider: BubbleTextProvider? = null
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -57,7 +61,7 @@ class FastScroller : FrameLayout {
         get() {
             val targetPosition = layoutManager.getScrolledItemPosition(fastScrollViewComponents)
             return if (targetPosition != RecyclerView.NO_POSITION)
-                viewState?.bubbleTextProvider?.provideBubbleText(targetPosition)
+                bubbleTextProvider?.provideBubbleText(targetPosition)
             else
                 ""
         }
@@ -143,23 +147,35 @@ class FastScroller : FrameLayout {
         with(context.theme.obtainStyledAttributes(attrs, R.styleable.FastScroller, defStyleAttr, defStyleRes)) {
             thumbBackground = getDrawable(R.styleable.FastScroller_thumbBackground)
             bubbleBackground = getDrawable(R.styleable.FastScroller_bubbleBackground)
-            trackBackground = getDrawable(R.styleable.FastScroller_trackBackground)
-            bubbleElevation = getDimension(R.styleable.FastScroller_bubbleElevation, resources.getDimension(R.dimen.default_bubble_elevation))
-            bubbleMargin = getDimensionOrDefaultInPixelSize(R.styleable.FastScroller_bubbleMargin, R.dimen.default_bubble_margin)
-            bubblePadding = getDimensionOrDefaultInPixelSize(R.styleable.FastScroller_bubblePadding, R.dimen.default_bubble_padding)
-            bubbleTextSize = getDimension(R.styleable.FastScroller_bubbleTextSize, resources.getDimension(R.dimen.default_bubble_text_size))
+            trackBackground = getDrawable(R.styleable.FastScroller_scrollbarBackground)
+            bubbleElevation = getDimension(
+                R.styleable.FastScroller_bubbleElevation,
+                resources.getDimension(R.dimen.default_bubble_elevation)
+            )
+            bubbleTextSize = getDimension(
+                R.styleable.FastScroller_bubbleTextSize,
+                resources.getDimension(R.dimen.default_bubble_text_size)
+            )
             bubbleTextColor = getColor(
                 R.styleable.FastScroller_bubbleTextColor,
                 ContextCompat.getColor(context, R.color.default_bubble_text_color)
             )
-            bubbleMinWidth = getDimension(
+            bubbleMargin = getDimensionOrDefaultInPixelSize(
+                R.styleable.FastScroller_bubbleMargin,
+                R.dimen.default_bubble_margin
+            )
+            bubblePadding = getDimensionOrDefaultInPixelSize(
+                R.styleable.FastScroller_bubblePadding,
+                R.dimen.default_bubble_padding
+            )
+            bubbleMinWidth = getDimensionOrDefaultInPixelSize(
                 R.styleable.FastScroller_bubbleMinWidth,
-                resources.getDimension(R.dimen.default_bubble_min_width)
-            ).toInt()
-            bubbleHeight = getDimension(
+                R.dimen.default_bubble_min_width
+            )
+            bubbleHeight = getDimensionOrDefaultInPixelSize(
                 R.styleable.FastScroller_bubbleHeight,
-                resources.getDimension(R.dimen.default_bubble_height)
-            ).toInt()
+                R.dimen.default_bubble_height
+            )
             return@with
         }
 
@@ -167,7 +183,7 @@ class FastScroller : FrameLayout {
             bubble.setPadding(bubblePadding, bubblePadding, bubblePadding, bubblePadding)
             bubble.layoutParams.height = bubbleHeight
             thumb.layoutParams.height = bubbleHeight
-            thumb.layoutParams.width = Utils.dpToPx(5)
+            thumb.layoutParams.width = dpToPx(5)
             ((bubble.layoutParams) as? MarginLayoutParams)?.marginEnd = bubbleMargin
             bubble.minWidth = bubbleMinWidth
             bubble.setTextColor(bubbleTextColor)
@@ -178,9 +194,6 @@ class FastScroller : FrameLayout {
             bubble.background = bubbleBackground
         }
     }
-
-    private fun TypedArray.getDimensionOrDefaultInPixelSize(attr: Int, defaultResource: Int)
-            = getDimensionPixelSize(attr, resources.getDimensionPixelSize(defaultResource))
 
     private fun setInitialBubblePosition() {
         layoutManager.calculateBubblePosition(fastScrollViewComponents, bubblePosition)
@@ -198,8 +211,8 @@ class FastScroller : FrameLayout {
         hideBubbleAnimation?.addUpdateListener(hideBubbleUpdateListener)
     }
 
-    private fun setScrollState(scrollState: ScrollbarState) {
-        this.currentScrollbarState = scrollState
+    private fun setScrollState(scrollStateBubble: BubbleScrollbarState) {
+        this.currentScrollbarState = scrollStateBubble
         renderScrollState()
     }
 
@@ -221,10 +234,6 @@ class FastScroller : FrameLayout {
 
     private fun onNoScroll() {
         visibility = View.GONE
-    }
-
-    fun setViewState(viewState: FastScrollerViewState) {
-        this.viewState = viewState
     }
 
     private fun moveBubble() {
@@ -277,13 +286,11 @@ class FastScroller : FrameLayout {
         return (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) && currentScrollbarState == VISIBLE_BUBBLE
     }
 
-    private fun isEventInTrackPosition(event: MotionEvent): Boolean {
-        return Utils.isEventInViewRect(event, fastScrollViewComponents.track, TOUCHABLE_AREA_PADDING, trackRect)
-    }
+    private fun isEventInTrackPosition(event: MotionEvent): Boolean =
+        event.isInViewRect(fastScrollViewComponents.track, TOUCHABLE_AREA_PADDING, trackRect)
 
-    private fun isEventInThumbPosition(event: MotionEvent): Boolean {
-        return Utils.isEventInViewRect(event, fastScrollViewComponents.thumb, TOUCHABLE_AREA_PADDING, thumbRect)
-    }
+    private fun isEventInThumbPosition(event: MotionEvent): Boolean =
+        event.isInViewRect(fastScrollViewComponents.thumb, TOUCHABLE_AREA_PADDING, thumbRect)
 
     private fun playHideBubbleAnimation() {
         showBubbleAnimation?.cancel()
@@ -313,18 +320,12 @@ class FastScroller : FrameLayout {
         showBubbleAnimation?.start()
     }
 
+    private fun setupCallbacks() = fastScrollViewComponents.recyclerView?.addOnScrollListener(onScrollListener)
 
-    private fun setupCallbacks() {
-        fastScrollViewComponents.recyclerView?.addOnScrollListener(onScrollListener)
-    }
+    private fun destroyCallbacks() = fastScrollViewComponents.recyclerView?.removeOnScrollListener(onScrollListener)
 
-    private fun destroyCallbacks() {
-        fastScrollViewComponents.recyclerView?.removeOnScrollListener(onScrollListener)
-    }
-
-    fun getScrollTarget(event: MotionEvent): Int {
-        return layoutManager.getScrollTarget(event, fastScrollViewComponents)
-    }
+    private fun getScrollTarget(event: MotionEvent): Int =
+        layoutManager.getScrollTarget(event, fastScrollViewComponents)
 
     fun setBubbleAnimationManager(bubbleAnimationManager: FastScrollBubbleAnimationManager) {
         this.bubbleAnimationManager = bubbleAnimationManager
@@ -334,36 +335,7 @@ class FastScroller : FrameLayout {
         this.layoutManager = layoutManager
     }
 
-    enum class ScrollbarState {
-        NO_SCROLLBAR,
-        VISIBLE_BUBBLE,
-        HIDDEN_BUBBLE
-    }
-
-
-    object Utils {
-        private fun addPadding(paddingDp: Int, outRect: Rect) {
-            outRect.left -= paddingDp
-            outRect.top -= paddingDp
-            outRect.right += paddingDp
-            outRect.bottom += paddingDp
-        }
-
-        internal fun isEventInViewRect(event: MotionEvent, view: View, padding: Int, outRect: Rect): Boolean {
-            val touchX = event.rawX.toInt()
-            val touchY = event.rawY.toInt()
-            view.getGlobalVisibleRect(outRect)
-            Utils.addPadding(padding, outRect)
-            return outRect.contains(touchX, touchY)
-        }
-
-        internal fun dpToPx(dp: Int): Int {
-            return (dp * Resources.getSystem().displayMetrics.density).toInt()
-        }
-    }
-
     companion object {
-
-        private val TOUCHABLE_AREA_PADDING = Utils.dpToPx(20)
+        private val TOUCHABLE_AREA_PADDING = dpToPx(20)
     }
 }
