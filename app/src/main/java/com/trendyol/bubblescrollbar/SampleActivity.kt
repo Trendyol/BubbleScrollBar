@@ -3,8 +3,7 @@ package com.trendyol.bubblescrollbar
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import com.trendyol.bubblescrollbarlib.animation.VerticalBubbleScrollBarAnimationManager
-import com.trendyol.bubblescrollbarlib.layoutmanager.VerticalBubbleScrollBarLayoutManager
+import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 import kotlinx.android.synthetic.main.activity_sample.*
 
 class SampleActivity : AppCompatActivity() {
@@ -19,11 +18,7 @@ class SampleActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@SampleActivity)
         }
 
-        fastscroll.apply {
-            attachToRecyclerView(recyclerView)
-            setBubbleAnimationManager(VerticalBubbleScrollBarAnimationManager())
-            setLayoutManager(VerticalBubbleScrollBarLayoutManager())
-            bubbleTextProvider = sampleAdapter
-        }
+        fastscroll.attachToRecyclerView(recyclerView)
+        fastscroll.bubbleTextProvider = BubbleTextProvider { sampleAdapter.data[it] }
     }
 }
