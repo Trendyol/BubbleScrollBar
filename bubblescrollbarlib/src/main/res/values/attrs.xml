@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="FastScroller">
+    <declare-styleable name="BubbleScrollBar">
         <attr name="scrollbarBackground" format="reference"/>
         <attr name="scrollbarWidth" format="dimension"/>
         <attr name="thumbHeight" format="dimension"/>
