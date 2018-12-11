@@ -1,12 +1,17 @@
 package com.trendyol.bubblescrollbarlib
 
+
 import android.animation.ValueAnimator
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Resources
+import android.content.res.TypedArray
 import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -15,14 +20,9 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-
+import com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.*
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollBubbleAnimationManager
 import com.trendyol.bubblescrollbarlib.vertical.VerticalFastScrollLayoutManager
-
-
-import com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.HIDDEN_BUBBLE
-import com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.NO_SCROLLBAR
-import com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.VISIBLE_BUBBLE
 
 class FastScroller : FrameLayout {
     private val thumbPosition = Point()
@@ -68,29 +68,37 @@ class FastScroller : FrameLayout {
         }
 
     private fun onBubbleTextChange(newText: String?) {
-        if (newText?.isNotEmpty() == true){
+        if (newText?.isNotEmpty() == true) {
             fastScrollViewComponents.bubble.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             fastScrollViewComponents.bubble.visibility = View.GONE
         }
     }
 
     constructor(context: Context) : super(context) {
         initializeView()
+        obtainStyledAttributes()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         initializeView()
+        obtainStyledAttributes(attrs)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         initializeView()
+        obtainStyledAttributes(attrs, defStyleAttr)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+        context,
+        attrs,
+        defStyleAttr,
+        defStyleRes
+    ) {
         initializeView()
+        obtainStyledAttributes(attrs, defStyleAttr, defStyleRes)
     }
 
     private fun onMove() {
@@ -103,11 +111,76 @@ class FastScroller : FrameLayout {
 
     private fun initializeView() {
         val root = LayoutInflater.from(context).inflate(R.layout.view_fast_scroller, this, true)
-        fastScrollViewComponents = FastScrollViewComponents(root.findViewById<View>(R.id.thumb) as ImageView, root.findViewById(R.id.track), root.findViewById<View>(R.id.bubble) as TextView)
+        fastScrollViewComponents = FastScrollViewComponents(
+            root.findViewById<View>(R.id.thumb) as ImageView,
+            root.findViewById(R.id.track),
+            root.findViewById<View>(R.id.bubble) as TextView
+        )
         initializeAnimations()
         post { setScrollState(layoutManager.calculateScrollState(fastScrollViewComponents.recyclerView)) }
         post { this@FastScroller.setInitialBubblePosition() }
     }
+
+    private var bubbleElevation = 0f
+    private var bubbleMargin: Int = 0
+
+
+    private var bubblePadding = 0
+    private var bubbleTextSize = 0f
+
+    private var bubbleTextColor: Int = 0
+
+    private var bubbleMinWidth = 0
+    private var bubbleHeight = 0
+
+    private var trackBackground: Drawable? = null
+
+    private var bubbleBackground: Drawable? = null
+
+    private var thumbBackground: Drawable? = null
+
+    private fun obtainStyledAttributes(attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) {
+        with(context.theme.obtainStyledAttributes(attrs, R.styleable.FastScroller, defStyleAttr, defStyleRes)) {
+            thumbBackground = getDrawable(R.styleable.FastScroller_thumbBackground)
+            bubbleBackground = getDrawable(R.styleable.FastScroller_bubbleBackground)
+            trackBackground = getDrawable(R.styleable.FastScroller_trackBackground)
+            bubbleElevation = getDimension(R.styleable.FastScroller_bubbleElevation, resources.getDimension(R.dimen.default_bubble_elevation))
+            bubbleMargin = getDimensionOrDefaultInPixelSize(R.styleable.FastScroller_bubbleMargin, R.dimen.default_bubble_margin)
+            bubblePadding = getDimensionOrDefaultInPixelSize(R.styleable.FastScroller_bubblePadding, R.dimen.default_bubble_padding)
+            bubbleTextSize = getDimension(R.styleable.FastScroller_bubbleTextSize, resources.getDimension(R.dimen.default_bubble_text_size))
+            bubbleTextColor = getColor(
+                R.styleable.FastScroller_bubbleTextColor,
+                ContextCompat.getColor(context, R.color.default_bubble_text_color)
+            )
+            bubbleMinWidth = getDimension(
+                R.styleable.FastScroller_bubbleMinWidth,
+                resources.getDimension(R.dimen.default_bubble_min_width)
+            ).toInt()
+            bubbleHeight = getDimension(
+                R.styleable.FastScroller_bubbleHeight,
+                resources.getDimension(R.dimen.default_bubble_height)
+            ).toInt()
+            return@with
+        }
+
+        with(fastScrollViewComponents) {
+            bubble.setPadding(bubblePadding, bubblePadding, bubblePadding, bubblePadding)
+            bubble.layoutParams.height = bubbleHeight
+            thumb.layoutParams.height = bubbleHeight
+            thumb.layoutParams.width = Utils.dpToPx(5)
+            ((bubble.layoutParams) as? MarginLayoutParams)?.marginEnd = bubbleMargin
+            bubble.minWidth = bubbleMinWidth
+            bubble.setTextColor(bubbleTextColor)
+            bubble.textSize = bubbleTextSize
+            ViewCompat.setElevation(bubble, bubbleElevation)
+            track.background = trackBackground
+            thumb.setImageDrawable(thumbBackground)
+            bubble.background = bubbleBackground
+        }
+    }
+
+    private fun TypedArray.getDimensionOrDefaultInPixelSize(attr: Int, defaultResource: Int)
+            = getDimensionPixelSize(attr, resources.getDimensionPixelSize(defaultResource))
 
     private fun setInitialBubblePosition() {
         layoutManager.calculateBubblePosition(fastScrollViewComponents, bubblePosition)
@@ -152,9 +225,6 @@ class FastScroller : FrameLayout {
 
     fun setViewState(viewState: FastScrollerViewState) {
         this.viewState = viewState
-        fastScrollViewComponents.track.setBackgroundColor(viewState.trackColor)
-        fastScrollViewComponents.thumb.setImageDrawable(viewState.thumbDrawable)
-        fastScrollViewComponents.bubble.background = viewState.bubbleDrawable
     }
 
     private fun moveBubble() {
@@ -221,7 +291,11 @@ class FastScroller : FrameLayout {
             return
         }
         hideBubbleAnimation = bubbleAnimationManager.provideHideBubbleAnimation(fastScrollViewComponents)
-        hideBubbleAnimation?.addUpdateListener(bubbleAnimationManager.provideHideBubbleUpdateListener(fastScrollViewComponents))
+        hideBubbleAnimation?.addUpdateListener(
+            bubbleAnimationManager.provideHideBubbleUpdateListener(
+                fastScrollViewComponents
+            )
+        )
         hideBubbleAnimation?.start()
     }
 
@@ -231,7 +305,11 @@ class FastScroller : FrameLayout {
             return
         }
         showBubbleAnimation = bubbleAnimationManager.provideShowBubbleAnimation(fastScrollViewComponents)
-        showBubbleAnimation?.addUpdateListener(bubbleAnimationManager.provideShowBubbleUpdateListener(fastScrollViewComponents))
+        showBubbleAnimation?.addUpdateListener(
+            bubbleAnimationManager.provideShowBubbleUpdateListener(
+                fastScrollViewComponents
+            )
+        )
         showBubbleAnimation?.start()
     }
 
