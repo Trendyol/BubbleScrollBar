@@ -31,11 +31,12 @@ class BubbleScrollBar : FrameLayout {
     private val thumbPosition = Point()
     private val bubblePosition = Point()
     private val thumbRect = Rect()
-    private val trackRect = Rect()
+    private val scrollBarRect = Rect()
 
     private var currentScrollbarState = BubbleScrollbarState.HIDDEN_BUBBLE
 
-    private var bubbleScrollBarAnimationManager: BubbleScrollBarAnimationManager = VerticalBubbleScrollBarAnimationManager()
+    private var bubbleScrollBarAnimationManager: BubbleScrollBarAnimationManager =
+        VerticalBubbleScrollBarAnimationManager()
     private var showBubbleAnimation: ValueAnimator? = null
     private var hideBubbleAnimation: ValueAnimator? = null
 
@@ -108,7 +109,7 @@ class BubbleScrollBar : FrameLayout {
         val root = LayoutInflater.from(context).inflate(R.layout.view_bubble_scrollbar, this, true)
         bubbleScrollBarViewComponents = BubbleScrollBarViewComponents(
             root.findViewById<View>(R.id.thumb) as ImageView,
-            root.findViewById(R.id.track),
+            root.findViewById(R.id.scrollBar),
             root.findViewById<View>(R.id.bubble) as TextView
         )
         initializeAnimations()
@@ -119,7 +120,6 @@ class BubbleScrollBar : FrameLayout {
     private var bubbleElevation = 0f
     private var bubbleMargin: Int = 0
 
-
     private var bubblePadding = 0
     private var bubbleTextSize = 0f
 
@@ -128,7 +128,8 @@ class BubbleScrollBar : FrameLayout {
     private var bubbleMinWidth = 0
     private var bubbleHeight = 0
 
-    private var trackBackground: Drawable? = null
+    private var scrollBarBackground: Drawable? = null
+    private var scrollBarWidth: Int = 0
 
     private var bubbleBackground: Drawable? = null
 
@@ -136,9 +137,13 @@ class BubbleScrollBar : FrameLayout {
 
     private fun obtainStyledAttributes(attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) {
         with(context.theme.obtainStyledAttributes(attrs, R.styleable.BubbleScrollBar, defStyleAttr, defStyleRes)) {
+            scrollBarBackground = getDrawable(R.styleable.BubbleScrollBar_scrollbarBackground)
+            scrollBarWidth = getDimensionOrDefaultInPixelSize(
+                R.styleable.BubbleScrollBar_scrollbarWidth,
+                R.dimen.default_scrollbar_width
+            )
             thumbBackground = getDrawable(R.styleable.BubbleScrollBar_thumbBackground)
             bubbleBackground = getDrawable(R.styleable.BubbleScrollBar_bubbleBackground)
-            trackBackground = getDrawable(R.styleable.BubbleScrollBar_scrollbarBackground)
             bubbleElevation = getDimension(
                 R.styleable.BubbleScrollBar_bubbleElevation,
                 resources.getDimension(R.dimen.default_bubble_elevation)
@@ -171,18 +176,20 @@ class BubbleScrollBar : FrameLayout {
         }
 
         with(bubbleScrollBarViewComponents) {
-            bubble.setPadding(bubblePadding, bubblePadding, bubblePadding, bubblePadding)
-            bubble.layoutParams.height = bubbleHeight
+            scrollBar.background = scrollBarBackground
+            thumb.layoutParams.width = scrollBarWidth
+
             thumb.layoutParams.height = bubbleHeight
-            thumb.layoutParams.width = dpToPx(5)
+            thumb.setImageDrawable(thumbBackground)
+
             ((bubble.layoutParams) as? MarginLayoutParams)?.marginEnd = bubbleMargin
             bubble.minWidth = bubbleMinWidth
             bubble.setTextColor(bubbleTextColor)
             bubble.textSize = bubbleTextSize
-            ViewCompat.setElevation(bubble, bubbleElevation)
-            track.background = trackBackground
-            thumb.setImageDrawable(thumbBackground)
+            bubble.setPadding(bubblePadding, bubblePadding, bubblePadding, bubblePadding)
+            bubble.layoutParams.height = bubbleHeight
             bubble.background = bubbleBackground
+            ViewCompat.setElevation(bubble, bubbleElevation)
         }
     }
 
@@ -268,7 +275,7 @@ class BubbleScrollBar : FrameLayout {
     }
 
     private fun shouldContinueFastScrolling(event: MotionEvent): Boolean {
-        return event.action == MotionEvent.ACTION_MOVE && isEventInTrackPosition(event)
+        return event.action == MotionEvent.ACTION_MOVE && isEventInScrollBarPosition(event)
     }
 
     private fun shouldStartFastScrolling(event: MotionEvent): Boolean {
@@ -279,8 +286,8 @@ class BubbleScrollBar : FrameLayout {
         return (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) && currentScrollbarState == VISIBLE_BUBBLE
     }
 
-    private fun isEventInTrackPosition(event: MotionEvent): Boolean =
-        event.isInViewRect(bubbleScrollBarViewComponents.track, TOUCHABLE_AREA_PADDING, trackRect)
+    private fun isEventInScrollBarPosition(event: MotionEvent): Boolean =
+        event.isInViewRect(bubbleScrollBarViewComponents.scrollBar, TOUCHABLE_AREA_PADDING, scrollBarRect)
 
     private fun isEventInThumbPosition(event: MotionEvent): Boolean =
         event.isInViewRect(bubbleScrollBarViewComponents.thumb, TOUCHABLE_AREA_PADDING, thumbRect)

@@ -6,7 +6,7 @@
     android:background="@android:color/transparent">
 
     <FrameLayout
-        android:id="@+id/track"
+        android:id="@+id/scrollBar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
@@ -14,11 +14,11 @@
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/thumb"
-            android:layout_width="20dp"
+            android:layout_width="match_parent"
             android:layout_height="5dp"
             tools:background="@android:color/holo_purple"
             tools:layout_height="20dp"
-            tools:layout_width="5dp" />
+            tools:layout_width="match_parent" />
 
     </FrameLayout>
 
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="54dp"
         android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@+id/track"
+        android:layout_toStartOf="@+id/scrollBar"
         android:elevation="6dp"
         android:fontFamily="sans-serif"
         android:gravity="center"

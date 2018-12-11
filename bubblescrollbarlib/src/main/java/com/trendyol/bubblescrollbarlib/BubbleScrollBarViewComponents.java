@@ -9,13 +9,13 @@ import android.widget.TextView;
 public class BubbleScrollBarViewComponents {
 
     private final ImageView thumb;
-    private final View track;
+    private final View scrollBar;
     private final TextView bubble;
     private RecyclerView recyclerView;
 
-    public BubbleScrollBarViewComponents(ImageView thumb, View track, TextView bubble) {
+    public BubbleScrollBarViewComponents(ImageView thumb, View scrollBar, TextView bubble) {
         this.thumb = thumb;
-        this.track = track;
+        this.scrollBar = scrollBar;
         this.bubble = bubble;
     }
 
@@ -32,8 +32,8 @@ public class BubbleScrollBarViewComponents {
         return thumb;
     }
 
-    public final View getTrack() {
-        return track;
+    public final View getScrollBar() {
+        return scrollBar;
     }
 
     public final TextView getBubble() {
