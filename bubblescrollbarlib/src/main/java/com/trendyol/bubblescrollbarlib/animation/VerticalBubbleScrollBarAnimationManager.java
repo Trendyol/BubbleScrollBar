@@ -13,7 +13,6 @@ public class VerticalBubbleScrollBarAnimationManager implements BubbleScrollBarA
     public VerticalBubbleScrollBarAnimationManager() {
     }
 
-
     @Override
     public ValueAnimator provideShowBubbleAnimation(BubbleScrollBarViewComponents viewComponents) {
         return ValueAnimator.ofFloat(HIDDEN_ALPHA, VISIBLE_ALPHA);
