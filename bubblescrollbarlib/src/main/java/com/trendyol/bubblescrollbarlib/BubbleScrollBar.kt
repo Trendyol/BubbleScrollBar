@@ -67,11 +67,7 @@ class BubbleScrollBar : FrameLayout {
         }
 
     private fun onBubbleTextChange(newText: String?) {
-        if (newText?.isNotEmpty() == true) {
-            bubbleScrollBarViewComponents.bubble.visibility = View.VISIBLE
-        } else {
-            bubbleScrollBarViewComponents.bubble.visibility = View.GONE
-        }
+        bubbleScrollBarViewComponents.bubble.visibility = if (newText?.isNotEmpty() == true) View.VISIBLE else View.GONE
     }
 
     constructor(context: Context) : super(context) {
@@ -199,8 +195,10 @@ class BubbleScrollBar : FrameLayout {
         showBubbleAnimation = bubbleScrollBarAnimationManager.provideShowBubbleAnimation(bubbleScrollBarViewComponents)
         hideBubbleAnimation = bubbleScrollBarAnimationManager.provideHideBubbleAnimation(bubbleScrollBarViewComponents)
 
-        val showBubbleUpdateListener = bubbleScrollBarAnimationManager.provideShowBubbleUpdateListener(bubbleScrollBarViewComponents)
-        val hideBubbleUpdateListener = bubbleScrollBarAnimationManager.provideHideBubbleUpdateListener(bubbleScrollBarViewComponents)
+        val showBubbleUpdateListener =
+            bubbleScrollBarAnimationManager.provideShowBubbleUpdateListener(bubbleScrollBarViewComponents)
+        val hideBubbleUpdateListener =
+            bubbleScrollBarAnimationManager.provideHideBubbleUpdateListener(bubbleScrollBarViewComponents)
 
         showBubbleAnimation?.addUpdateListener(showBubbleUpdateListener)
         hideBubbleAnimation?.addUpdateListener(hideBubbleUpdateListener)
@@ -317,9 +315,11 @@ class BubbleScrollBar : FrameLayout {
 
     private fun setupCallbacks() = bubbleScrollBarViewComponents.recyclerView?.addOnScrollListener(onScrollListener)
 
-    private fun destroyCallbacks() = bubbleScrollBarViewComponents.recyclerView?.removeOnScrollListener(onScrollListener)
+    private fun destroyCallbacks() =
+        bubbleScrollBarViewComponents.recyclerView?.removeOnScrollListener(onScrollListener)
 
-    private fun getScrollTarget(event: MotionEvent): Int = barLayoutManager.getScrollTarget(event, bubbleScrollBarViewComponents)
+    private fun getScrollTarget(event: MotionEvent): Int =
+        barLayoutManager.getScrollTarget(event, bubbleScrollBarViewComponents)
 
     fun setBubbleAnimationManager(bubbleScrollBarAnimationManager: BubbleScrollBarAnimationManager) {
         this.bubbleScrollBarAnimationManager = bubbleScrollBarAnimationManager
