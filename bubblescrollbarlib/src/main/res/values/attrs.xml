@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BubbleScrollBar">
+        <attr name="scrollbarBackground" format="reference"/>
+        <attr name="scrollbarWidth" format="dimension"/>
+        <attr name="thumbHeight" format="dimension"/>
+        <attr name="thumbBackground" format="reference"/>
+        <attr name="bubbleBackground" format="reference"/>
+        
+        <attr name="bubbleElevation" format="dimension"/>
+        <attr name="bubbleMargin" format="dimension"/>
+        <attr name="bubblePadding" format="dimension"/>
+        <attr name="bubbleTextSize" format="dimension"/>
+        <attr name="bubbleTextColor" format="color"/>
+        <attr name="bubbleMinWidth" format="dimension"/>
+        <attr name="bubbleHeight" format="dimension"/>
+    </declare-styleable>
+</resources>

@@ -1,4 +1,4 @@
-package com.trendyol.bubblescrollbarlib.vertical;
+package com.trendyol.bubblescrollbarlib.layoutmanager;
 
 import android.graphics.Point;
 import android.support.annotation.NonNull;
@@ -6,22 +6,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
-import com.trendyol.bubblescrollbarlib.FastScrollLayoutManager;
-import com.trendyol.bubblescrollbarlib.FastScrollViewComponents;
-import com.trendyol.bubblescrollbarlib.FastScroller;
+import com.trendyol.bubblescrollbarlib.BubbleScrollbarState;
+import com.trendyol.bubblescrollbarlib.BubbleScrollBarViewComponents;
 
-import static com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.HIDDEN_BUBBLE;
-import static com.trendyol.bubblescrollbarlib.FastScroller.ScrollbarState.NO_SCROLLBAR;
-
-public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager {
+public class VerticalBubbleScrollBarLayoutManager implements BubbleScrollBarLayoutManager {
 
     public static final int STEP_RATIO = 10;
 
-    public VerticalFastScrollLayoutManager() {
+    public VerticalBubbleScrollBarLayoutManager() {
     }
 
     @Override
-    public void calculateThumbPosition(FastScrollViewComponents viewComponents, Point outThumbPosition) {
+    public void calculateThumbPosition(BubbleScrollBarViewComponents viewComponents, Point outThumbPosition) {
         RecyclerView recyclerView = viewComponents.getRecyclerView();
         if (recyclerView == null) {
             return;
@@ -36,7 +32,7 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    public void calculateBubblePosition(FastScrollViewComponents viewComponents, Point outBubblePosition) {
+    public void calculateBubblePosition(BubbleScrollBarViewComponents viewComponents, Point outBubblePosition) {
         outBubblePosition.set((int) viewComponents.getBubble().getX(), Math.max(getThumbCenterY(viewComponents.getThumb()), 0));
     }
 
@@ -45,8 +41,8 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    public FastScroller.ScrollbarState calculateScrollState(RecyclerView attachedRecyclerView) {
-        return shouldShowScrollbar(attachedRecyclerView) ? FastScroller.ScrollbarState.HIDDEN_BUBBLE: FastScroller.ScrollbarState.NO_SCROLLBAR;
+    public BubbleScrollbarState calculateScrollState(RecyclerView attachedRecyclerView) {
+        return shouldShowScrollbar(attachedRecyclerView) ? BubbleScrollbarState.HIDDEN_BUBBLE: BubbleScrollbarState.NO_SCROLLBAR;
     }
 
     @Override
@@ -56,7 +52,7 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    public int getScrollTarget(MotionEvent event, FastScrollViewComponents viewComponents) {
+    public int getScrollTarget(MotionEvent event, BubbleScrollBarViewComponents viewComponents) {
         RecyclerView recyclerView = viewComponents.getRecyclerView();
         if (recyclerView == null) {
             return 0;
@@ -72,7 +68,7 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
         return (recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollExtent());
     }
 
-    private double getScrollProgress(FastScrollViewComponents viewComponents) {
+    private double getScrollProgress(BubbleScrollBarViewComponents viewComponents) {
         RecyclerView recyclerView = viewComponents.getRecyclerView();
         if (recyclerView == null) {
             return 0;
@@ -83,7 +79,7 @@ public class VerticalFastScrollLayoutManager implements FastScrollLayoutManager 
     }
 
     @Override
-    public int getScrolledItemPosition(FastScrollViewComponents viewComponents) {
+    public int getScrolledItemPosition(BubbleScrollBarViewComponents viewComponents) {
         RecyclerView recyclerView = viewComponents.getRecyclerView();
         if (recyclerView == null) {
             return 0;

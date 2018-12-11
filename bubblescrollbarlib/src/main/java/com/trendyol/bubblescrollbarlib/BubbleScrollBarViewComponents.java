@@ -6,14 +6,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class FastScrollViewComponents {
+public class BubbleScrollBarViewComponents {
 
     private final ImageView thumb;
     private final View track;
     private final TextView bubble;
     private RecyclerView recyclerView;
 
-    public FastScrollViewComponents(ImageView thumb, View track, TextView bubble) {
+    public BubbleScrollBarViewComponents(ImageView thumb, View track, TextView bubble) {
         this.thumb = thumb;
         this.track = track;
         this.bubble = bubble;

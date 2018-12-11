@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.trendyol.bubblescrollbarlib.BubbleTextProvider
 
-class SampleAdapter : RecyclerView.Adapter<SampleAdapter.SampleViewHolder>(), BubbleTextProvider {
+class SampleAdapter : RecyclerView.Adapter<SampleAdapter.SampleViewHolder>(){
 
     val data = mutableListOf<String>()
 
@@ -23,11 +22,7 @@ class SampleAdapter : RecyclerView.Adapter<SampleAdapter.SampleViewHolder>(), Bu
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(viewHolder: SampleViewHolder, adapterPosition: Int) {
-        viewHolder.bind(data.get(adapterPosition))
-    }
-
-    override fun provideBubbleText(position: Int): String {
-        return data.get(position).firstOrNull()?.toString() ?: ""
+        viewHolder.bind(data[adapterPosition])
     }
 
     inner class SampleViewHolder(view: View) : RecyclerView.ViewHolder(view) {

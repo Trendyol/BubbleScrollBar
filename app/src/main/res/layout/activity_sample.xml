@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-        <com.trendyol.bubblescrollbarlib.FastScroller
-                android:id="@+id/fastscroll"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:orientation="vertical" />
+        <com.trendyol.bubblescrollbarlib.BubbleScrollBar
+            android:id="@+id/fastscroll"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:orientation="vertical"
+            app:bubbleBackground="@drawable/fast_scroll_thumb"
+            app:thumbBackground="@color/colorAccent"
+            app:scrollbarBackground="@color/colorPrimaryDark"
+            app:bubbleTextSize="12sp"
+            app:bubbleElevation="6dp"
+            app:bubbleMargin="4dp"
+            app:bubbleHeight="54dp"
+            app:bubbleMinWidth="54dp"
+            app:bubbleTextColor="@color/default_bubble_text_color"
+            app:bubblePadding="4dp"
+            />
 
     </FrameLayout>
 </LinearLayout>
